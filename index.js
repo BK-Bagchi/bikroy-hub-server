@@ -9,7 +9,6 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-client.connect(err => {
 
   app.get('/', (req, res) => {
     res.send('Welcome to Bikroy.com backend');
@@ -21,8 +20,10 @@ client.connect(err => {
 
   app.post('/profileInfo', (req, res) => {
   // write data from here
+    const formData = req.body;
+    res.json(formData);
+    console.log(formData);
   })
-});
 
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
