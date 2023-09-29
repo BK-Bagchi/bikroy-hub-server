@@ -19,12 +19,16 @@ app.use(bodyParser.urlencoded({ extended: false }))
   // })
 
   app.post('/profileInfo', (req, res) => {
-  // write data from here
     const formData = req.body;
     res.json(formData);
     console.log(formData);
   })
 
+  app.post('/postAds', (req, res) => {
+      const adsData = req.body;
+      res.json(adsData);
+      console.log(adsData);
+    })
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
 });
