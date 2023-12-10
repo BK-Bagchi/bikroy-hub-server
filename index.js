@@ -58,8 +58,8 @@ async function run() {
     // console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
       const postAds = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_ONE}`);
-      const getProfileInfo = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_TWO}`);
-      const postProfileInfo = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_THREE}`);
+      const profileInfo = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_TWO}`);
+      // const profileInfo = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_THREE}`);
 
       app.get('/', (req, res) => {
         res.send('Welcome to Bikroy.com backend');
@@ -67,30 +67,25 @@ async function run() {
 
       app.get('/getProfileInfo', (req, res) => {
         //read data from here
-        getProfileInfo.find({})
+        profileInfo.find({})
             .toArray((err, result) => res.send(result))
       })
 
       app.post('/postProfileInfo', (req, res) => {
-        // const formData = req.body;
-        // res.json(formData);
-        // console.log(formData);
-
-        postProfileInfo.insertOne(req.body)
+        // console.log(req.body);
+        profileInfo.insertOne(req.body)
             .then(result => res.send(result))
       })
 
       app.post('/postAds', (req, res) => {
-          // const adsData = req.body;
-          // res.json(adsData);
-          // console.log(adsData);
-
+          // console.log(req.body);
           postAds.insertOne(req.body)
-            .then(result => res.send(result))
+          .then(result => res.send(result))
         })
+
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
