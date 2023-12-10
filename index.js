@@ -17,37 +17,16 @@ const client = new MongoClient(url, {
   }
 });
 
-app.use(cors())
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-
-// client.connect(err => {
-//   // const menuItems = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_ONE}`);
-//   // const whyChooseUs = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_TWO}`);
-//   // const foodOrder = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_THREE}`);
-//   console.log("Database is connected");
-
-//   app.get('/', (req, res) => {
-//     res.send('Welcome to Bikroy.com backend');
-//   })
-
-//   // app.get('/profileInfo', (req, res) => {
-//   // read data from here
-//   // })
-
-//   app.post('/profileInfo', (req, res) => {
-//     const formData = req.body;
-//     res.json(formData);
-//     console.log(formData);
-//   })
-
-//   app.post('/postAds', (req, res) => {
-//       const adsData = req.body;
-//       res.json(adsData);
-//       console.log(adsData);
-//     })
-// });
 
 async function run() {
   try {
@@ -65,12 +44,16 @@ async function run() {
         res.send('Welcome to Bikroy.com backend');
       })
 
-      app.get('/getProfileInfo', (req, res) => {
-        //read data from here
-        profileInfo.find({})
-            .toArray((err, result) => res.send(result))
-      })
-
+      app.get('/getProfileInfo', async (req, res) => {
+        try {
+          const documents = await profileInfo.find({}).toArray();
+          res.send(documents);
+        } catch (error) {
+          console.error('Error fetching profile info:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+    
       app.post('/postProfileInfo', (req, res) => {
         // console.log(req.body);
         profileInfo.insertOne(req.body)
