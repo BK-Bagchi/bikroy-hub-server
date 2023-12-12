@@ -62,6 +62,26 @@ async function run() {
           res.status(500).json({ error: 'Internal Server Error' });
         }
       });
+
+      app.get('/getPostedAdsByAnUser', async (req, res) => {
+        try {
+          const userEmail = req.query.userEmail;
+          const user = await profileInfo.findOne({ userEmail });
+          if (user) {
+            // If the user is found, retrieve their posted ads
+            const userAds = await postAds.find({ userEmail }).toArray();
+            res.json({ user, userAds });
+          } else {
+            // If the user is not found, send an appropriate response
+            res.status(404).json({ error: 'User not found' });
+          }
+        } catch (error) {
+          console.error('Error fetching user and ads:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });      
+      
+      
     
       app.post('/postProfileInfo', (req, res) => {
         // console.log(req.body);
