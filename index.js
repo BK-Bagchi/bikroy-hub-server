@@ -21,7 +21,6 @@ const corsOptions = {
   origin: 'http://localhost:3000',
   optionsSuccessStatus: 200,
 };
-
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json())
@@ -47,6 +46,16 @@ async function run() {
       app.get('/getProfileInfo', async (req, res) => {
         try {
           const documents = await profileInfo.find({}).toArray();
+          res.send(documents);
+        } catch (error) {
+          console.error('Error fetching profile info:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+
+      app.get('/getAdsInfo', async (req, res) => {
+        try {
+          const documents = await postAds.find({}).toArray();
           res.send(documents);
         } catch (error) {
           console.error('Error fetching profile info:', error);
