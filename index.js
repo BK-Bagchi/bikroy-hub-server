@@ -5,7 +5,7 @@ const port = 4000;
 const cors = require('cors')
 const bodyParser = require('body-parser')
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId  } = require('mongodb');
 const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.g0cgl.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 // const uri = "mongodb+srv://UnWoRthY:<password>@cluster0.g0cgl.mongodb.net/?retryWrites=true&w=majority";
 // console.log(url);
@@ -96,6 +96,25 @@ async function run() {
           }
         } catch (error) {
           console.error('Error fetching user and ads:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+
+      app.put('/updateAds', async (req, res) => {
+        try {
+          const adId = req.query.adId;
+          const updatedAdData = req.body;
+          const objectId = new ObjectId(adId);
+          delete updatedAdData._id;
+      
+          const result = await postAds.updateOne({ _id: objectId }, { $set: updatedAdData });
+          if (result.matchedCount === 1) {
+            res.status(200).json({ message: 'Ad updated successfully' });
+          } else {
+            res.status(404).json({ message: 'Ad not found' });
+          }
+        } catch (error) {
+          console.error(error);
           res.status(500).json({ error: 'Internal Server Error' });
         }
       });
