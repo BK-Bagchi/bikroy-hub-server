@@ -79,10 +79,27 @@ async function run() {
           console.error('Error fetching user and ads:', error);
           res.status(500).json({ error: 'Internal Server Error' });
         }
-      });      
+      });
       
+      app.get('/editPostedAdsByAnUser', async (req, res) => {
+        try {
+          const { userEmail, _id } = req.query;
+          const user = await postAds.findOne({ userEmail });
+          if (user) {
+            // If the user is found, retrieve their posted ads
+            const userAds = await postAds.find({ userEmail }).toArray();
+            const editableAd= userAds.filter(add=> add._id == _id)
+            res.json({ editableAd });
+          } else {
+            // If the user is not found, send an appropriate response
+            res.status(404).json({ error: 'User not found' });
+          }
+        } catch (error) {
+          console.error('Error fetching user and ads:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
       
-    
       app.post('/postProfileInfo', (req, res) => {
         // console.log(req.body);
         profileInfo.insertOne(req.body)
