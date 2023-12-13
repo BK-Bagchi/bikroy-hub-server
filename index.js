@@ -55,7 +55,7 @@ async function run() {
 
       app.get('/getAdsInfo', async (req, res) => {
         try {
-          const documents = await postAds.find({}).limit(5).toArray();
+          const documents = await postAds.find().sort({ _id: -1 }).limit(5).toArray();
           res.send(documents);
         } catch (error) {
           console.error('Error fetching profile info:', error);
