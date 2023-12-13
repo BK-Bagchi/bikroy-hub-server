@@ -66,7 +66,7 @@ async function run() {
       app.get('/getPostedAdsByAnUser', async (req, res) => {
         try {
           const userEmail = req.query.userEmail;
-          const user = await profileInfo.findOne({ userEmail });
+          const user = await postAds.findOne({ userEmail });
           if (user) {
             // If the user is found, retrieve their posted ads
             const userAds = await postAds.find({ userEmail }).toArray();
