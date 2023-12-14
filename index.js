@@ -42,7 +42,7 @@ async function run() {
 
       const postAds = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_ONE}`);
       const profileInfo = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_TWO}`);
-      // const profileInfo = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_THREE}`);
+      const placedOrders = client.db(`${process.env.DB_NAME}`).collection(`${process.env.DB_TABLE_THREE}`);
 
       app.get('/', (req, res) => {
         res.send('Welcome to Bikroy.com backend');
@@ -136,8 +136,8 @@ async function run() {
           .then(result => res.send(result))
         })
       
-      const transactionId= new ObjectId().toString();
       app.post('/orderNow', async (req, res) => {
+        const orderId= new ObjectId().toString();
         const objectId = new ObjectId(req.body._id);
         const product= await postAds.findOne({_id: objectId});
         const orderInfo= req.body
@@ -147,8 +147,9 @@ async function run() {
           total_amount: product.price,
           currency: 'BDT',
           tran_id: orderInfo._id, // use unique tran_id for each api call
-          success_url: 'http://localhost:3030/success',
-          fail_url: 'http://localhost:3030/fail',
+          success_url: `http://localhost:4000/payment/success/${orderId}/${orderInfo.userEmail}`,
+          fail_url: `http://localhost:4000/payment/fail/${orderId}/${orderInfo.userEmail}`,
+          // fail_url: 'http://localhost:3030/fail',
           cancel_url: 'http://localhost:3030/cancel',
           ipn_url: 'http://localhost:3030/ipn',
           shipping_method: 'Courier',
@@ -180,7 +181,55 @@ async function run() {
             // Redirect the user to payment gateway
             let GatewayPageURL = apiResponse.GatewayPageURL
             res.send({url: GatewayPageURL})
-            console.log('Redirecting to: ', GatewayPageURL)
+
+            const finalOrder= {
+              orderId: orderId,
+              productId: orderInfo._id,
+              customerInfo: orderInfo.userEmail,
+              paymentStatus: false,
+            }
+            const result= placedOrders.insertOne(finalOrder)
+        });
+
+        app.post('/payment/success/:orderId/:userId', async (req, res) => {
+          try {
+            const result = await placedOrders.updateOne(
+              {
+                orderId: req.params.orderId,
+                customerInfo: req.params.userId,
+              },
+              { $set: { paymentStatus: true } }
+            );
+        
+            if (result.modifiedCount > 0) {
+              res.redirect('http://localhost:3000/paymentSuccess');
+            } else {
+              res.redirect('http://localhost:3000/paymentFailed');
+            }
+          } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+          }
+        });
+        
+        app.post('/payment/fail/:orderId/:userId', async (req, res) => {
+          try {
+            const result = await placedOrders.deleteOne(
+              {
+              orderId: req.params.orderId,
+              customerInfo: req.params.userId,
+              }
+            );
+        
+            if (result.deletedCount > 0) {
+              res.redirect('http://localhost:3000/paymentFailed');
+            } else {
+              res.redirect('http://localhost:3000/');
+            }
+          } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+          }
         });
       })
 
