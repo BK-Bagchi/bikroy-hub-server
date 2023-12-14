@@ -105,6 +105,22 @@ async function run() {
         }
       });
 
+      app.get('/ordersByAnUser', async (req, res) => {
+        try {
+          const userEmail = req.query.userEmail;
+          const userOrders = await placedOrders.find({ customerInfo: userEmail }).toArray();
+      
+          if (userOrders.length > 0) {
+            res.json({ userOrders });
+          } else {
+            res.status(404).json({ error: 'No orders found for the user' });
+          }
+        } catch (error) {
+          console.error('Error fetching user orders:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+
       app.put('/updateAds', async (req, res) => {
         try {
           const adId = req.query.adId;
