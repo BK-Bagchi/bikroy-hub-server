@@ -130,6 +130,14 @@ async function run() {
           postAds.insertOne(req.body)
           .then(result => res.send(result))
         })
+      
+      app.post('/orderNow', async (req, res) => {
+        const objectId = new ObjectId(req.body._id);
+        const product= await postAds.findOne({_id: objectId});
+        const orderInfo= req.body
+        // console.log(product);
+        
+      })
 
   } finally {
     // Ensures that the client will close when you finish/error
