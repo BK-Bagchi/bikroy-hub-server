@@ -50,7 +50,8 @@ async function run() {
 
       app.get('/getProfileInfo', async (req, res) => {
         try {
-          const documents = await profileInfo.find({}).toArray();
+          const email = req.query.userEmail; 
+          const documents = await profileInfo.find({ email }).toArray();
           res.send(documents);
         } catch (error) {
           console.error('Error fetching profile info:', error);
@@ -140,11 +141,26 @@ async function run() {
         }
       });
       
-      app.post('/postProfileInfo', (req, res) => {
-        // console.log(req.body);
-        profileInfo.insertOne(req.body)
-            .then(result => res.send(result))
-      })
+      app.post('/postProfileInfo', async (req, res) => {
+        try {
+          const { _id, ...updateData } = req.body;
+          const result = await profileInfo.updateOne(
+            { email: req.body.email },
+            { $set: updateData }
+          );
+          if (result.modifiedCount > 0) {
+            // The document was updated successfully
+            res.status(200).json({ message: 'Profile info updated successfully' });
+          } else {
+            // No document was modified, possibly because the email didn't match any existing document
+            res.status(404).json({ message: 'Profile not found' });
+          }
+        } catch (error) {
+          console.error(error);
+          res.status(500).send('Internal Server Error');
+        }
+      });
+      
 
       app.post('/postAds', (req, res) => {
           // console.log(req.body);
@@ -248,6 +264,25 @@ async function run() {
           }
         });
       })
+
+
+      app.post('/userLogin', async (req, res) => {
+        try {
+          const { displayName, email, photoURL } = req.body;
+          const result = await profileInfo.insertOne({displayName, email, photoURL});
+          if (result.insertedCount > 0) {
+            // User details inserted successfully
+            res.status(200).json({ message: 'User details inserted successfully' });
+          } else {
+            // Failed to insert user details
+            res.status(500).json({ error: 'Failed to insert user details' });
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+      
 
   } finally {
     // Ensures that the client will close when you finish/error
