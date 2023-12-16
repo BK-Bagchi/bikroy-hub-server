@@ -61,10 +61,10 @@ async function run() {
 
       app.get('/getAdsInfo', async (req, res) => {
         try {
-          const documents = await postAds.find().sort({ _id: -1 }).limit(5).toArray();
+          const documents = await postAds.find().toArray();
           res.send(documents);
         } catch (error) {
-          console.error('Error fetching profile info:', error);
+          console.error('Error fetching ads info:', error);
           res.status(500).json({ error: 'Internal Server Error' });
         }
       });
