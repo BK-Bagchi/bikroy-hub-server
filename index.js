@@ -167,6 +167,29 @@ async function run() {
         }
       });
       
+      app.post('/deleteAds', async (req, res) => {
+        try {
+          const deleteAdId = req.body.adId;
+          const objectId = new ObjectId(deleteAdId);
+      
+          const result = await postAds.deleteOne({ _id: objectId });
+          if (result.deletedCount > 0) {
+            const placedOrdersResult = await placedOrders.deleteMany({ productId: deleteAdId });
+            if (placedOrdersResult.deletedCount > 0) {
+              res.status(200).json({ message: 'Ad and related orders deleted successfully' });
+            } else {
+              res.status(200).json({ message: 'Ad deleted, but no related orders found' });
+            }
+          } else {
+            res.status(404).json({ message: 'Ad not found' });
+          }
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+      
+
       app.post('/postProfileInfo', async (req, res) => {
         try {
           const { _id, ...updateData } = req.body;
