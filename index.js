@@ -265,6 +265,21 @@ async function run() {
         });
       })
 
+      app.post('/deleteOrder', async (req, res) => {
+        try {
+          const { orderId } = req.body;
+          const result = await placedOrders.deleteOne({ orderId });
+      
+          if (result.deletedCount > 0) {
+            res.status(200).json({ message: 'Data deleted successfully' });
+          } else {
+            res.status(404).json({ message: 'Data not found' });
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
 
       app.post('/userLogin', async (req, res) => {
         try {
