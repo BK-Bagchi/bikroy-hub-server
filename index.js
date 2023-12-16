@@ -267,6 +267,7 @@ async function run() {
               orderId: orderId,
               productId: orderInfo._id,
               customerInfo: orderInfo.userEmail,
+              customerCredentials: data,
               paymentStatus: false,
             }
             const result= placedOrders.insertOne(finalOrder)
