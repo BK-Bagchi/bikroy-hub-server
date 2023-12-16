@@ -69,6 +69,16 @@ async function run() {
         }
       });
 
+      app.get('/getOrdersInfo', async (req, res) => {
+        try {
+          const documents = await placedOrders.find().toArray();
+          res.send(documents);
+        } catch (error) {
+          console.error('Error fetching ads info:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+
       app.get('/getPostedAdsByAnUser', async (req, res) => {
         try {
           const userEmail = req.query.userEmail;
@@ -113,6 +123,22 @@ async function run() {
       
           if (userOrders.length > 0) {
             res.json({ userOrders });
+          } else {
+            res.status(404).json({ error: 'No orders found for the user' });
+          }
+        } catch (error) {
+          console.error('Error fetching user orders:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+
+      app.get('/adsByAnUser', async (req, res) => {
+        try {
+          const userEmail = req.query.userEmail;
+          const userAds = await postAds.find({ userEmail: userEmail }).toArray();
+      
+          if (userAds.length > 0) {
+            res.json({ userAds });
           } else {
             res.status(404).json({ error: 'No orders found for the user' });
           }
