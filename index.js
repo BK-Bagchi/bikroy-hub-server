@@ -189,6 +189,28 @@ async function run() {
         }
       });
       
+      app.post('/userLogin', async (req, res) => {
+        try {
+            const { displayName, email, photoURL } = req.body;
+            const existingUser = await profileInfo.findOne({ email });
+    
+            if (existingUser) {
+                res.status(200).json({ message: 'Login successful' });
+            } else {
+                const result = await profileInfo.insertOne({ displayName, email, photoURL });
+                if (result.insertedCount > 0) {
+                    // User details inserted successfully
+                    res.status(200).json({ message: 'User details inserted successfully' });
+                } else {
+                    // Failed to insert user details
+                    res.status(500).json({ error: 'Failed to insert user details' });
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
 
       app.post('/postProfileInfo', async (req, res) => {
         try {
@@ -330,24 +352,6 @@ async function run() {
           res.status(500).json({ error: 'Internal Server Error' });
         }
       });
-
-      app.post('/userLogin', async (req, res) => {
-        try {
-          const { displayName, email, photoURL } = req.body;
-          const result = await profileInfo.insertOne({displayName, email, photoURL});
-          if (result.insertedCount > 0) {
-            // User details inserted successfully
-            res.status(200).json({ message: 'User details inserted successfully' });
-          } else {
-            // Failed to insert user details
-            res.status(500).json({ error: 'Failed to insert user details' });
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          res.status(500).json({ error: 'Internal Server Error' });
-        }
-      });
-      
 
   } finally {
     // Ensures that the client will close when you finish/error
