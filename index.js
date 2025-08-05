@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import dbConnection from "./config/database.js";
 import { MongoClient, ServerApiVersion, ObjectId } from "mongodb";
 import SSLCommerzPayment from "sslcommerz-lts";
+import bikroyDotComRoutes from "./Routes/bikroydotcom.routes.js";
 
 // Load environment variables
 dotenv.config();
@@ -18,18 +19,6 @@ app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json()); // app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false })); // app.use(bodyParser.urlencoded({ extended: false }));
 
-// MongoDB Setup
-const client = new MongoClient(
-  `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.g0cgl.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
-  {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    },
-  }
-);
-
 // SSLCommerz Config
 const store_id = process.env.SSL_STORE_ID;
 const store_passwd = process.env.SSL_STORE_PASSWORD;
@@ -39,19 +28,7 @@ const is_live = false; // Change to true in production
 dbConnection();
 
 // ─────────────────────────────── ROUTES ─────────────────────────────── //
-
-app.get("/", (req, res) => res.send("Welcome to Bikroy.com backend"));
-
-// ✔ Get Profile Info
-app.get("/getProfileInfo", async (req, res) => {
-  try {
-    const email = req.query.userEmail;
-    const data = await profileInfo.find({ email }).toArray();
-    res.send(data);
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+app.use("/", bikroyDotComRoutes);
 
 // ✔ Get All Ads
 app.get("/getAdsInfo", async (_, res) => {
@@ -156,40 +133,6 @@ app.post("/deleteAds", async (req, res) => {
     res
       .status(200)
       .json({ message: "Ad and related orders deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ✔ User Login / Register
-app.post("/userLogin", async (req, res) => {
-  try {
-    const { displayName, email, photoURL } = req.body;
-    const exists = await profileInfo.findOne({ email });
-
-    if (exists) return res.status(200).json({ message: "Login successful" });
-
-    const result = await profileInfo.insertOne({
-      displayName,
-      email,
-      photoURL,
-    });
-    result.insertedId
-      ? res.status(200).json({ message: "User created successfully" })
-      : res.status(500).json({ error: "Failed to insert user details" });
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ✔ Update Profile Info
-app.post("/postProfileInfo", async (req, res) => {
-  try {
-    const { email, ...rest } = req.body;
-    const result = await profileInfo.updateOne({ email }, { $set: rest });
-    result.modifiedCount > 0
-      ? res.status(200).json({ message: "Profile info updated" })
-      : res.status(404).json({ message: "Profile not found" });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
