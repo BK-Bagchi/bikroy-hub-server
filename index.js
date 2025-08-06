@@ -30,47 +30,11 @@ dbConnection();
 // ─────────────────────────────── ROUTES ─────────────────────────────── //
 app.use("/", bikroyDotComRoutes);
 
-// ✔ Get All Ads
-app.get("/getAdsInfo", async (_, res) => {
-  try {
-    const ads = await postAds.find().toArray();
-    res.send(ads);
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
 // ✔ Get All Orders
 app.get("/getOrdersInfo", async (_, res) => {
   try {
     const orders = await placedOrders.find().toArray();
     res.send(orders);
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ✔ Get Posted Ads by User
-app.get("/getPostedAdsByAnUser", async (req, res) => {
-  const { userEmail } = req.query;
-  try {
-    const userAds = await postAds.find({ userEmail }).toArray();
-    if (userAds.length === 0)
-      return res.status(404).json({ error: "User not found" });
-    res.json({ userAds });
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ✔ Edit Specific Ad
-app.get("/editPostedAdsByAnUser", async (req, res) => {
-  try {
-    const { userEmail, _id } = req.query;
-    const ad = await postAds.findOne({ _id: new ObjectId(_id), userEmail });
-    ad
-      ? res.json({ editableAd: ad })
-      : res.status(404).json({ error: "Ad not found" });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -99,50 +63,6 @@ app.get("/adsByAnUser", async (req, res) => {
     userAds.length
       ? res.json({ userAds })
       : res.status(404).json({ error: "No ads found" });
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ✔ Update Ad
-app.put("/updateAds", async (req, res) => {
-  try {
-    const adId = new ObjectId(req.query.adId);
-    const updateData = req.body;
-    delete updateData._id;
-
-    const result = await postAds.updateOne({ _id: adId }, { $set: updateData });
-    result.matchedCount
-      ? res.status(200).json({ message: "Ad updated successfully" })
-      : res.status(404).json({ message: "Ad not found" });
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ✔ Delete Ad + Orders
-app.post("/deleteAds", async (req, res) => {
-  try {
-    const objectId = new ObjectId(req.body.adId);
-    const result = await postAds.deleteOne({ _id: objectId });
-
-    if (!result.deletedCount)
-      return res.status(404).json({ message: "Ad not found" });
-
-    await placedOrders.deleteMany({ productId: req.body.adId });
-    res
-      .status(200)
-      .json({ message: "Ad and related orders deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ✔ Post New Ad
-app.post("/postAds", async (req, res) => {
-  try {
-    const result = await postAds.insertOne(req.body);
-    res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
