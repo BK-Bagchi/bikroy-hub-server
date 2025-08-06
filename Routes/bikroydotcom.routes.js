@@ -15,6 +15,12 @@ import {
   postDeleteAdds,
 } from "../controller/adds.controller.js";
 
+import { postPlaceOrder } from "../controller/order.controller.js";
+import {
+  postPaymentFail,
+  postPaymentSuccess,
+} from "../controller/sslcomerz.controller.js";
+
 const bikroyDotComRoutes = express();
 
 // ✔ Default Route
@@ -51,5 +57,19 @@ bikroyDotComRoutes.put("/updateAdds", putUpdateAdds);
 
 // ✔ Delete Ad + Orders
 bikroyDotComRoutes.post("/deleteAdds", postDeleteAdds);
+
+// ───────────────────── SSLCommerz Order ───────────────────── //
+
+bikroyDotComRoutes.post("/placeOrder", postPlaceOrder);
+
+// ✔ Payment Success
+bikroyDotComRoutes.post(
+  "/payment/success/:orderId/:userId",
+  postPaymentSuccess
+);
+
+// ✔ Payment Failed
+bikroyDotComRoutes.post("/payment/fail/:orderId/:userId", postPaymentFail);
+// ───────────────────── SSLCommerz Order ───────────────────── //
 
 export default bikroyDotComRoutes;

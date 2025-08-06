@@ -19,11 +19,6 @@ app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json()); // app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false })); // app.use(bodyParser.urlencoded({ extended: false }));
 
-// SSLCommerz Config
-const store_id = process.env.SSL_STORE_ID;
-const store_passwd = process.env.SSL_STORE_PASSWORD;
-const is_live = false; // Change to true in production
-
 // Initialize MongoDB Connection
 dbConnection();
 
@@ -65,89 +60,6 @@ app.get("/adsByAnUser", async (req, res) => {
       : res.status(404).json({ error: "No ads found" });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ───────────────────── SSLCommerz Order ───────────────────── //
-
-app.post("/orderNow", async (req, res) => {
-  try {
-    const orderId = new ObjectId().toString();
-    const product = await postAds.findOne({ _id: new ObjectId(req.body._id) });
-
-    const data = {
-      total_amount: product.price,
-      currency: "BDT",
-      tran_id: orderId,
-      success_url: `http://localhost:4000/payment/success/${orderId}/${req.body.userEmail}`,
-      fail_url: `http://localhost:4000/payment/fail/${orderId}/${req.body.userEmail}`,
-      cancel_url: "http://localhost:3030/cancel",
-      ipn_url: "http://localhost:3030/ipn",
-      shipping_method: "Courier",
-      product_name: req.body.itemName,
-      product_category: req.body.category,
-      product_profile: "general",
-      cus_name: req.body.userName,
-      cus_email: req.body.userEmail,
-      cus_add1: req.body.shippingAddress,
-      cus_city: "Dhaka",
-      cus_state: "Dhaka",
-      cus_postcode: req.body.postCode,
-      cus_country: "Bangladesh",
-      cus_phone: req.body.contactNumber,
-      ship_name: req.body.userName,
-      ship_add1: req.body.shippingAddress,
-      ship_city: "Dhaka",
-      ship_state: "Dhaka",
-      ship_postcode: req.body.postCode,
-      ship_country: "Bangladesh",
-    };
-
-    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-    const apiResponse = await sslcz.init(data);
-
-    await placedOrders.insertOne({
-      orderId,
-      productId: req.body._id,
-      customerInfo: req.body.userEmail,
-      customerCredentials: data,
-      paymentStatus: false,
-    });
-
-    res.send({ url: apiResponse.GatewayPageURL });
-  } catch (err) {
-    res.status(500).json({ error: "Order initiation failed" });
-  }
-});
-
-// ✔ Payment Success
-app.post("/payment/success/:orderId/:userId", async (req, res) => {
-  try {
-    const result = await placedOrders.updateOne(
-      { orderId: req.params.orderId, customerInfo: req.params.userId },
-      { $set: { paymentStatus: true } }
-    );
-
-    res.redirect(
-      result.modifiedCount > 0
-        ? "http://localhost:3000/paymentSuccess"
-        : "http://localhost:3000/paymentFailed"
-    );
-  } catch (err) {
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-// ✔ Payment Failed
-app.post("/payment/fail/:orderId/:userId", async (req, res) => {
-  try {
-    await placedOrders.deleteOne({
-      orderId: req.params.orderId,
-      customerInfo: req.params.userId,
-    });
-    res.redirect("http://localhost:3000/paymentFailed");
-  } catch (err) {
-    res.status(500).send("Internal Server Error");
   }
 });
 
