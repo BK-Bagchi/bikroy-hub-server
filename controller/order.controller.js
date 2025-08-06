@@ -50,7 +50,7 @@ export const postPlaceOrder = async (req, res) => {
     await orderInfo.create({
       orderId,
       productId: new mongoose.Types.ObjectId(req.body._id),
-      customerInfo: req.body.email,
+      customerEmail: req.body.email,
       customerCredentials: data,
       paymentStatus: false,
     });
@@ -58,5 +58,29 @@ export const postPlaceOrder = async (req, res) => {
     res.send({ url: apiResponse.GatewayPageURL });
   } catch (err) {
     res.status(500).json({ error: "Order initiation failed" });
+  }
+};
+
+export const postDeleteOrder = async (req, res) => {
+  try {
+    const result = await orderInfo.deleteOne({ orderId: req.query.orderId });
+    result.deletedCount > 0
+      ? res.status(200).json({ message: "Order deleted" })
+      : res.status(404).json({ message: "Order not found" });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getOrdersByAnUser = async (req, res) => {
+  try {
+    const userOrders = await orderInfo.find({
+      customerEmail: req.query.userEmail,
+    });
+    userOrders.length
+      ? res.json({ userOrders })
+      : res.status(404).json({ error: "No orders found" });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

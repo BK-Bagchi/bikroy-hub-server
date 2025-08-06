@@ -35,20 +35,6 @@ app.get("/getOrdersInfo", async (_, res) => {
   }
 });
 
-// ✔ User Orders
-app.get("/ordersByAnUser", async (req, res) => {
-  try {
-    const userOrders = await placedOrders
-      .find({ customerInfo: req.query.userEmail })
-      .toArray();
-    userOrders.length
-      ? res.json({ userOrders })
-      : res.status(404).json({ error: "No orders found" });
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
 // ✔ Ads by User
 app.get("/adsByAnUser", async (req, res) => {
   try {
@@ -58,18 +44,6 @@ app.get("/adsByAnUser", async (req, res) => {
     userAds.length
       ? res.json({ userAds })
       : res.status(404).json({ error: "No ads found" });
-  } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// ✔ Delete Order
-app.post("/deleteOrder", async (req, res) => {
-  try {
-    const result = await placedOrders.deleteOne({ orderId: req.body.orderId });
-    result.deletedCount > 0
-      ? res.status(200).json({ message: "Order deleted" })
-      : res.status(404).json({ message: "Order not found" });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }

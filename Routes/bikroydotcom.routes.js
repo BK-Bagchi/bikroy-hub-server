@@ -15,7 +15,11 @@ import {
   postDeleteAdds,
 } from "../controller/adds.controller.js";
 
-import { postPlaceOrder } from "../controller/order.controller.js";
+import {
+  getOrdersByAnUser,
+  postPlaceOrder,
+  postDeleteOrder,
+} from "../controller/order.controller.js";
 import {
   postPaymentFail,
   postPaymentSuccess,
@@ -60,6 +64,7 @@ bikroyDotComRoutes.post("/deleteAdds", postDeleteAdds);
 
 // ───────────────────── SSLCommerz Order ───────────────────── //
 
+// ✔ Place Orders
 bikroyDotComRoutes.post("/placeOrder", postPlaceOrder);
 
 // ✔ Payment Success
@@ -70,6 +75,13 @@ bikroyDotComRoutes.post(
 
 // ✔ Payment Failed
 bikroyDotComRoutes.post("/payment/fail/:orderId/:userId", postPaymentFail);
+
 // ───────────────────── SSLCommerz Order ───────────────────── //
+
+// ✔ User Orders
+bikroyDotComRoutes.get("/ordersByAnUser", getOrdersByAnUser);
+
+// ✔ Delete Order
+bikroyDotComRoutes.post("/deleteOrder", postDeleteOrder);
 
 export default bikroyDotComRoutes;
