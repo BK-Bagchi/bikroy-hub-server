@@ -17,6 +17,7 @@ import {
 
 import {
   getOrdersByAnUser,
+  getOrdersInfo,
   postPlaceOrder,
   postDeleteOrder,
 } from "../controller/order.controller.js";
@@ -26,6 +27,8 @@ import {
 } from "../controller/sslcomerz.controller.js";
 
 const bikroyDotComRoutes = express();
+
+// ─────────────────────────────── ROUTES ─────────────────────────────── //
 
 // ✔ Default Route
 bikroyDotComRoutes.get("/", (req, res) =>
@@ -78,10 +81,15 @@ bikroyDotComRoutes.post("/payment/fail/:orderId/:userId", postPaymentFail);
 
 // ───────────────────── SSLCommerz Order ───────────────────── //
 
-// ✔ User Orders
+// ✔ Get All Orders
+bikroyDotComRoutes.get("/getOrdersInfo", getOrdersInfo);
+
+// ✔ Orders by a Specific User
 bikroyDotComRoutes.get("/ordersByAnUser", getOrdersByAnUser);
 
 // ✔ Delete Order
 bikroyDotComRoutes.post("/deleteOrder", postDeleteOrder);
+
+// ─────────────────────────────── ROUTES ─────────────────────────────── //
 
 export default bikroyDotComRoutes;

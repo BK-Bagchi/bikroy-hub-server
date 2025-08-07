@@ -61,6 +61,15 @@ export const postPlaceOrder = async (req, res) => {
   }
 };
 
+export const getOrdersInfo = async (req, res) => {
+  try {
+    const orders = await orderInfo.find();
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 export const postDeleteOrder = async (req, res) => {
   try {
     const result = await orderInfo.deleteOne({ orderId: req.query.orderId });
