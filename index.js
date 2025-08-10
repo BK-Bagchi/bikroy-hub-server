@@ -12,7 +12,25 @@ const app = express();
 const port = process.env.DB_PORT || 4000;
 
 // Middleware
-app.use(cors({ origin: "https://bikroy-com.netlify.app/" }));
+const allowedOrigins = [
+  "https://bikroy-com.netlify.app",
+  "http://localhost:4000",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json()); // app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false })); // app.use(bodyParser.urlencoded({ extended: false }));
 
