@@ -14,7 +14,7 @@ const port = process.env.DB_PORT || 4000;
 // Middleware
 const allowedOrigins = [
   "https://bikroy-com.netlify.app",
-  "http://localhost:4000",
+  "http://localhost:3000",
 ];
 
 app.use(
