@@ -20,16 +20,16 @@ export const postPlaceOrder = async (req, res) => {
       total_amount: product.price,
       currency: "BDT",
       tran_id: orderId,
-      success_url: `http://localhost:4000/payment/success/${orderId}/${req.body.email}`,
-      fail_url: `http://localhost:4000/payment/fail/${orderId}/${req.body.email}`,
-      cancel_url: "http://localhost:3030/cancel",
-      ipn_url: "http://localhost:3030/ipn",
+      success_url: `http://localhost:4000/payment/success/${orderId}/${req.body.customerEmail}`,
+      fail_url: `http://localhost:4000/payment/fail/${orderId}/${req.body.customerEmail}`,
+      cancel_url: "http://localhost:3000/cancel",
+      ipn_url: "http://localhost:3000/ipn",
       shipping_method: "Courier",
       product_name: req.body.itemName,
       product_category: req.body.category,
       product_profile: "general",
       cus_name: req.body.userName,
-      cus_email: req.body.email,
+      cus_email: req.body.customerEmail,
       cus_add1: req.body.shippingAddress,
       cus_city: "Dhaka",
       cus_state: "Dhaka",
@@ -50,10 +50,11 @@ export const postPlaceOrder = async (req, res) => {
     await orderInfo.create({
       orderId,
       productId: new mongoose.Types.ObjectId(req.body._id),
-      customerEmail: req.body.email,
+      sellerEmail: req.body.sellerEmail,
       customerCredentials: data,
       paymentStatus: false,
     });
+    // console.log(console.log({ body: req.body, data: data }));
 
     res.send({ url: apiResponse.GatewayPageURL });
   } catch (err) {
@@ -84,7 +85,7 @@ export const postDeleteOrder = async (req, res) => {
 export const getOrdersByAnUser = async (req, res) => {
   try {
     const userOrders = await orderInfo.find({
-      customerEmail: req.query.userEmail,
+      "customerCredentials.cus_email": req.query.userEmail,
     });
     userOrders.length
       ? res.json({ userOrders })

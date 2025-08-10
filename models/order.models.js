@@ -3,7 +3,7 @@ const orderSchema = new mongoose.Schema(
   {
     orderId: { type: String },
     productId: { type: mongoose.Schema.Types.ObjectId },
-    customerEmail: { type: String },
+    sellerEmail: { type: String },
     customerCredentials: { type: Object },
     paymentStatus: { type: Boolean, default: false },
   },
