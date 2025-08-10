@@ -12,7 +12,7 @@ const app = express();
 const port = process.env.DB_PORT || 4000;
 
 // Middleware
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "https://bikroy-com.netlify.app/" }));
 app.use(express.json()); // app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false })); // app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -24,5 +24,5 @@ app.use("/", bikroyDotComRoutes);
 
 // ───────────────────── Server ───────────────────── //
 app.listen(port, () => {
-  console.log(`🚀 Server is running on http://localhost:${port}`);
+  console.log(`🚀 Server is running on ${port}`);
 });
