@@ -26,7 +26,7 @@ export const postPaymentFail = async (req, res) => {
       orderId: req.params.orderId,
       customerInfo: req.params.userId,
     });
-    res.redirect("https://bikroy-com.netlify.app//paymentFailed");
+    res.redirect("https://bikroy-com.netlify.app/paymentFailed");
   } catch (err) {
     res.status(500).send("Internal Server Error");
   }
