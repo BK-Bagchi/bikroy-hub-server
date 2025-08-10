@@ -12,8 +12,8 @@ export const postPaymentSuccess = async (req, res) => {
 
     res.redirect(
       result.modifiedCount > 0
-        ? "http://localhost:3000/paymentSuccess"
-        : "http://localhost:3000/paymentFailed"
+        ? "https://bikroy-com.netlify.app//paymentSuccess"
+        : "https://bikroy-com.netlify.app//paymentFailed"
     );
   } catch (err) {
     res.status(500).send("Internal Server Error");
@@ -26,7 +26,7 @@ export const postPaymentFail = async (req, res) => {
       orderId: req.params.orderId,
       customerInfo: req.params.userId,
     });
-    res.redirect("http://localhost:3000/paymentFailed");
+    res.redirect("https://bikroy-com.netlify.app//paymentFailed");
   } catch (err) {
     res.status(500).send("Internal Server Error");
   }

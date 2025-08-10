@@ -32,7 +32,9 @@ const bikroyDotComRoutes = express();
 
 // ✔ Default Route
 bikroyDotComRoutes.get("/", (req, res) =>
-  res.send("Welcome to Bikroy.com backend")
+  res.send(
+    "Welcome to Bikroy.com backend. Frontend is available at https://bikroy-com.netlify.app/"
+  )
 );
 
 // ✔ User Login / Register
