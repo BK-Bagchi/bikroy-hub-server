@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import profileInfo from "../models/profile.models.js";
 
 export const postUserLogin = async (req, res) => {

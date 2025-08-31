@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
 import orderInfo from "../models/order.models.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 //postPlaceOrder, postPaymentSuccess, postPaymentFail together works wil SSLCommerz
 // import { postPlaceOrder } from "./order.controller.js";
@@ -12,8 +13,8 @@ export const postPaymentSuccess = async (req, res) => {
 
     res.redirect(
       result.modifiedCount > 0
-        ? "https://bikroy-com.netlify.app//paymentSuccess"
-        : "https://bikroy-com.netlify.app//paymentFailed"
+        ? `${process.env.FRONT_URL}/paymentSuccess`
+        : `${process.env.FRONT_URL}/paymentFailed`
     );
   } catch (err) {
     res.status(500).send("Internal Server Error");
@@ -26,7 +27,7 @@ export const postPaymentFail = async (req, res) => {
       orderId: req.params.orderId,
       customerInfo: req.params.userId,
     });
-    res.redirect("https://bikroy-com.netlify.app/paymentFailed");
+    res.redirect(`${process.env.FRONT_URL}/paymentFailed`);
   } catch (err) {
     res.status(500).send("Internal Server Error");
   }

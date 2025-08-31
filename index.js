@@ -12,21 +12,9 @@ const app = express();
 const port = process.env.DB_PORT || 4000;
 
 // Middleware
-const allowedOrigins = [
-  "https://bikroy-com.netlify.app",
-  "http://localhost:3000",
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps or curl)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: (origin, callback) => callback(null, true), // allow all origins dynamically
     credentials: true,
   })
 );

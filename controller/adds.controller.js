@@ -39,8 +39,6 @@ export const getPostedAdsByAnUser = async (req, res) => {
   try {
     const email = req.query.userEmail;
     const userAds = await addsInfo.find({ email });
-    if (!userAds.length)
-      return res.status(404).json({ error: "User not found" });
     res.json({ userAds });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });

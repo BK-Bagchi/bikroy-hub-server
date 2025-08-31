@@ -1,4 +1,5 @@
 import express from "express";
+import dotenv from "dotenv";
 import {
   getProfileInfo,
   postProfileInfo,
@@ -25,6 +26,7 @@ import {
   postPaymentFail,
   postPaymentSuccess,
 } from "../controller/sslcomerz.controller.js";
+dotenv.config();
 
 const bikroyDotComRoutes = express();
 
@@ -32,9 +34,7 @@ const bikroyDotComRoutes = express();
 
 // ✔ Default Route
 bikroyDotComRoutes.get("/", (req, res) =>
-  res.send(
-    "Welcome to Bikroy.com backend. Frontend is available at https://bikroy-com.netlify.app/"
-  )
+  res.redirect(`${process.env.FRONT_URL}`)
 );
 
 // ✔ User Login / Register

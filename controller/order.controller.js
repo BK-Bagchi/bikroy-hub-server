@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-dotenv.config();
 import orderInfo from "../models/order.models.js";
 import addsInfo from "../models/adds.models.js";
 import SSLCommerzPayment from "sslcommerz-lts";
+dotenv.config();
 
 // SSLCommerz Config
 const store_id = process.env.SSL_STORE_ID;
@@ -20,10 +20,10 @@ export const postPlaceOrder = async (req, res) => {
       total_amount: product.price,
       currency: "BDT",
       tran_id: orderId,
-      success_url: `https://bikroydotcom-server.onrender.com/payment/success/${orderId}/${req.body.customerEmail}`,
-      fail_url: `https://bikroydotcom-server.onrender.com/payment/fail/${orderId}/${req.body.customerEmail}`,
-      cancel_url: "https://bikroy-com.netlify.app/cancel",
-      ipn_url: "https://bikroy-com.netlify.app/ipn",
+      success_url: `${process.env.BASE_URL}/payment/success/${orderId}/${req.body.customerEmail}`,
+      fail_url: `${process.env.BASE_URL}/payment/fail/${orderId}/${req.body.customerEmail}`,
+      cancel_url: `${process.env.FRONT_URL}/cancel`,
+      ipn_url: `${process.env.FRONT_URL}/ipn`,
       shipping_method: "Courier",
       product_name: req.body.itemName,
       product_category: req.body.category,
@@ -87,9 +87,7 @@ export const getOrdersByAnUser = async (req, res) => {
     const userOrders = await orderInfo.find({
       "customerCredentials.cus_email": req.query.userEmail,
     });
-    userOrders.length
-      ? res.json({ userOrders })
-      : res.status(404).json({ error: "No orders found" });
+    res.json({ userOrders });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
