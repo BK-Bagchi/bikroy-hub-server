@@ -9,6 +9,7 @@ const addsSchema = new mongoose.Schema(
     itemName: { type: String },
     phoneNumber: { type: String },
     photoURL: { type: String },
+    deleteURL: { type: String },
     postingTime: { type: String },
     price: { type: String },
   },
