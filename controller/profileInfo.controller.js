@@ -1,21 +1,52 @@
 import profileInfo from "../models/profile.models.js";
+import jwt from "jsonwebtoken";
+import admin from "firebase-admin";
+import { getAuth } from "firebase-admin/auth";
+import dotenv from "dotenv";
+dotenv.config();
 
+//firebase admin initialization
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 export const postUserLogin = async (req, res) => {
   try {
-    const { displayName, email, photoURL } = req.body;
-    const exists = await profileInfo.findOne({ email });
+    const { idToken } = req.body;
+    if (!idToken) return res.status(400).json({ error: "idToken is required" });
 
-    if (exists) return res.status(200).json({ message: "Login successful" });
-
-    const result = await profileInfo.insertOne({
-      displayName,
-      email,
-      photoURL,
+    const decodedToken = await getAuth().verifyIdToken(idToken);
+    const { name, email, picture, uid } = decodedToken;
+    const token = jwt.sign({ uid, email }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
     });
-    result.insertedId
-      ? res.status(200).json({ message: "User created successfully" })
-      : res.status(500).json({ error: "Failed to insert user details" });
+
+    let user = await profileInfo.findOne({ email });
+    if (!user) {
+      user = await profileInfo.create({
+        displayName: name,
+        email: email,
+        photoURL: picture,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+      },
+    });
   } catch (err) {
+    //prettier-ignore
+    if (err.code === "auth/argument-error" || err.code === "auth/id-token-expired")
+      return res.status(401).json({ error: "Invalid or expired ID token" });
+
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
