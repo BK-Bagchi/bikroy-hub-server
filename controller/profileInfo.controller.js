@@ -19,7 +19,10 @@ export const postUserLogin = async (req, res) => {
 
     const decodedToken = await getAuth().verifyIdToken(idToken);
     const { name, email, picture, uid } = decodedToken;
-    const token = jwt.sign({ uid, email }, process.env.JWT_SECRET, {
+    const displayName = name;
+    const photoURL = picture;
+    //prettier-ignore
+    const token = jwt.sign({ uid, displayName, email, photoURL }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
