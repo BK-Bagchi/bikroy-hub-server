@@ -25,6 +25,7 @@ export const postUserLogin = async (req, res) => {
     const token = jwt.sign({ uid, displayName, email, photoURL }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+    //on token decoded, uid, displayName, email, photoURL will be attached to request
 
     let user = await profileInfo.findOne({ email });
     if (!user) {
@@ -56,7 +57,7 @@ export const postUserLogin = async (req, res) => {
 
 export const getProfileInfo = async (req, res) => {
   try {
-    const email = req.query.userEmail;
+    const email = req.user.email;
     const data = await profileInfo.find({ email });
     res.send(data);
   } catch (err) {
