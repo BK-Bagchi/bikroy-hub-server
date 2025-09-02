@@ -26,6 +26,7 @@ import {
   postPaymentFail,
   postPaymentSuccess,
 } from "../controller/sslcomerz.controller.js";
+import { authenticateJWTToken } from "../middleware/authJWT.middleware.js";
 dotenv.config();
 
 const bikroyDotComRoutes = express();
@@ -41,7 +42,7 @@ bikroyDotComRoutes.get("/", (req, res) =>
 bikroyDotComRoutes.post("/userLogin", postUserLogin);
 
 // ✔ Get Profile Info
-bikroyDotComRoutes.get("/getProfileInfo", getProfileInfo);
+bikroyDotComRoutes.get("/getProfileInfo", authenticateJWTToken, getProfileInfo);
 
 // ✔ Update Profile Info
 bikroyDotComRoutes.post("/postProfileInfo", postProfileInfo);
