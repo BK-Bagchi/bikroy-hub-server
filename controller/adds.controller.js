@@ -96,6 +96,25 @@ export const putUpdateAdds = async (req, res) => {
   }
 };
 
+export const putUpdateAddStatus = async (req, res) => {
+  const { adId, status } = req.body;
+  if (!mongoose.Types.ObjectId.isValid(adId))
+    return res.status(400).json({ error: "Invalid adId format" });
+
+  try {
+    const result = await addsInfo.findByIdAndUpdate(
+      adId,
+      { $set: { status } },
+      { new: true }
+    );
+    if (result) res.status(200).json({ message: "Ad updated successfully" });
+    else res.status(404).json({ message: "Ad not found" });
+  } catch (err) {
+    console.error("Error updating ad:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 export const postDeleteAdds = async (req, res) => {
   const { adId } = req.query;
   if (!mongoose.Types.ObjectId.isValid(adId))

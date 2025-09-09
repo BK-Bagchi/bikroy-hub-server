@@ -14,6 +14,7 @@ import {
   editPostedAddsByAnUser,
   putUpdateAdds,
   postDeleteAdds,
+  putUpdateAddStatus,
 } from "../controller/adds.controller.js";
 
 import {
@@ -64,6 +65,7 @@ bikroyDotComRoutes.get("/editPostedAddsByAnUser", editPostedAddsByAnUser);
 
 // ✔ Update Ad
 bikroyDotComRoutes.put("/updateAdds", putUpdateAdds);
+bikroyDotComRoutes.put("/updateAddStatus", putUpdateAddStatus);
 
 // ✔ Delete Ad + Orders
 bikroyDotComRoutes.post("/deleteAdds", postDeleteAdds);

@@ -12,6 +12,11 @@ const addsSchema = new mongoose.Schema(
     deleteURL: { type: String },
     postingTime: { type: String },
     price: { type: String },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
