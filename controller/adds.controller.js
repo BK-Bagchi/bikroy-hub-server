@@ -3,7 +3,16 @@ import addsInfo from "../models/adds.models.js";
 
 export const getAddsInfo = async (req, res) => {
   try {
-    const ads = await addsInfo.find();
+    const ads = await addsInfo.aggregate([
+      {
+        $lookup: {
+          from: "profileinfos", // collection name in MongoDB
+          localField: "email", // field in addsInfo
+          foreignField: "email", // field in profileInfo
+          as: "userInfo", // new field with matched user
+        },
+      },
+    ]);
     res.send(ads);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
