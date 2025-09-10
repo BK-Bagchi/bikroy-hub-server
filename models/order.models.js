@@ -16,7 +16,8 @@ const orderSchema = new mongoose.Schema(
     orderId: { type: String },
     productId: { type: mongoose.Schema.Types.ObjectId, ref: "addsInfo" },
     sellerEmail: { type: String },
-    customerCredentials: { type: Object },
+    customerEmail: { type: String },
+    orderCredentials: { type: Object },
     paymentStatus: { type: Boolean, default: false },
     orderStatusByAdmin: {
       type: String,

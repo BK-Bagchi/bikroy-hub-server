@@ -1,62 +1,9 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
 import orderInfo from "../models/order.models.js";
-import addsInfo from "../models/adds.models.js";
-import SSLCommerzPayment from "sslcommerz-lts";
-dotenv.config();
-
-// SSLCommerz Config
-const store_id = process.env.SSL_STORE_ID;
-const store_passwd = process.env.SSL_STORE_PASSWORD;
-const is_live = false; // Change to true in production
+import { payThroughSsl } from "./sslcomerz.controller.js";
 
 export const postPlaceOrder = async (req, res) => {
   try {
-    const orderId = new mongoose.Types.ObjectId().toString();
-    const product = await addsInfo.findById(req.body._id);
-    if (!product) return res.status(404).json({ error: "Product not found" });
-
-    const data = {
-      total_amount: product.price,
-      currency: "BDT",
-      tran_id: orderId,
-      success_url: `${process.env.BASE_URL}/payment/success/${orderId}/${req.body.customerEmail}`,
-      fail_url: `${process.env.BASE_URL}/payment/fail/${orderId}/${req.body.customerEmail}`,
-      cancel_url: `${process.env.FRONT_URL}/cancel`,
-      ipn_url: `${process.env.FRONT_URL}/ipn`,
-      shipping_method: "Courier",
-      product_name: req.body.itemName,
-      product_category: req.body.category,
-      product_profile: "general",
-      cus_name: req.body.userName,
-      cus_email: req.body.customerEmail,
-      cus_add1: req.body.shippingAddress,
-      cus_city: "Dhaka",
-      cus_state: "Dhaka",
-      cus_postcode: req.body.postCode,
-      cus_country: "Bangladesh",
-      cus_phone: req.body.phoneNumber,
-      ship_name: req.body.userName,
-      ship_add1: req.body.shippingAddress,
-      ship_city: "Dhaka",
-      ship_state: "Dhaka",
-      ship_postcode: req.body.postCode,
-      ship_country: "Bangladesh",
-    };
-
-    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-    const apiResponse = await sslcz.init(data);
-
-    await orderInfo.create({
-      orderId,
-      productId: new mongoose.Types.ObjectId(req.body._id),
-      sellerEmail: req.body.sellerEmail,
-      customerCredentials: data,
-      paymentStatus: false,
-    });
-    // console.log(console.log({ body: req.body, data: data }));
-
-    res.send({ url: apiResponse.GatewayPageURL });
+    payThroughSsl(req, res);
   } catch (err) {
     res.status(500).json({ error: "Order initiation failed" });
   }
@@ -85,7 +32,7 @@ export const postDeleteOrder = async (req, res) => {
 export const getOrdersByAnUser = async (req, res) => {
   try {
     const userOrders = await orderInfo.find({
-      "customerCredentials.cus_email": req.query.userEmail,
+      customerEmail: req.query.userEmail,
     });
     res.json({ userOrders });
   } catch (err) {

@@ -77,12 +77,15 @@ bikroyDotComRoutes.post("/placeOrder", postPlaceOrder);
 
 // ✔ Payment Success
 bikroyDotComRoutes.post(
-  "/payment/success/:orderId/:userId",
+  "/payment/success/:orderId/:customerEmail",
   postPaymentSuccess
 );
 
 // ✔ Payment Failed
-bikroyDotComRoutes.post("/payment/fail/:orderId/:userId", postPaymentFail);
+bikroyDotComRoutes.post(
+  "/payment/fail/:orderId/:customerEmail",
+  postPaymentFail
+);
 
 // ───────────────────── SSLCommerz Order ───────────────────── //
 
