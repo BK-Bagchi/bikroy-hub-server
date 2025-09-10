@@ -22,6 +22,7 @@ import {
   getOrdersInfo,
   postPlaceOrder,
   postDeleteOrder,
+  getSpecificOrderInfo,
 } from "../controller/order.controller.js";
 import {
   postPaymentFail,
@@ -91,6 +92,7 @@ bikroyDotComRoutes.post(
 
 // ✔ Get All Orders
 bikroyDotComRoutes.get("/getOrdersInfo", getOrdersInfo);
+bikroyDotComRoutes.get("/getSpecificOrderInfo", getSpecificOrderInfo);
 
 // ✔ Orders by a Specific User
 bikroyDotComRoutes.get("/ordersByAnUser", getOrdersByAnUser);

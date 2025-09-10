@@ -12,7 +12,30 @@ export const postPlaceOrder = async (req, res) => {
 export const getOrdersInfo = async (req, res) => {
   try {
     const orders = await orderInfo.find();
+    if (!orders)
+      return res.status(404).json({ error: "Orders not found in db" });
     res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getSpecificOrderInfo = async (req, res) => {
+  try {
+    const order = await orderInfo.aggregate([
+      { $match: { orderId: req.query.orderId } },
+      {
+        $lookup: {
+          from: "addsinfos", // collection name
+          localField: "productId", // field in orderInfo
+          foreignField: "_id", // field in addsInfo
+          as: "addInfo",
+        },
+      },
+    ]);
+
+    if (!order) return res.status(404).json({ error: "Order not found" });
+    res.json(order);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
