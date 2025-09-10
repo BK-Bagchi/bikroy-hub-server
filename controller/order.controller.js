@@ -1,5 +1,7 @@
+import dotenv from "dotenv";
 import orderInfo from "../models/order.models.js";
 import { payThroughSsl } from "./sslcomerz.controller.js";
+dotenv.config();
 
 export const postPlaceOrder = async (req, res) => {
   try {
@@ -36,6 +38,20 @@ export const getSpecificOrderInfo = async (req, res) => {
 
     if (!order) return res.status(404).json({ error: "Order not found" });
     res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const updateOrderStatusBySeller = async (req, res) => {
+  try {
+    const result = await orderInfo.updateOne(
+      { orderId: req.query.orderId },
+      { $set: { orderStatusBySeller: req.body.status } }
+    );
+    result.matchedCount > 0
+      ? res.status(200).json({ message: "Order status updated" })
+      : res.status(404).json({ message: "Order not found" });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
