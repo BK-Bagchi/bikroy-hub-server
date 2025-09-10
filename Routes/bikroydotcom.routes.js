@@ -22,6 +22,7 @@ import {
   getOrdersInfo,
   postPlaceOrder,
   postDeleteOrder,
+  updateOrderStatusByBuyer,
   updateOrderStatusBySeller,
   getSpecificOrderInfoByAdInfo,
   getSpecificOrderInfoByOrderInfo,
@@ -110,6 +111,8 @@ bikroyDotComRoutes.get("/ordersByAnUser", getOrdersByAnUser);
 
 // ✔ Order status update by admin
 // ✔ Order status update by buyer
+bikroyDotComRoutes.patch("/updateOrderStatusByBuyer", updateOrderStatusByBuyer);
+
 // ✔ Order status update by seller
 bikroyDotComRoutes.patch(
   "/updateOrderStatusBySeller",
