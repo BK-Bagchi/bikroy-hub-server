@@ -15,7 +15,24 @@ export const postPlaceOrder = async (req, res) => {
 
 export const getOrdersInfo = async (req, res) => {
   try {
-    const orders = await orderInfo.find();
+    const orders = await orderInfo.aggregate([
+      {
+        $lookup: {
+          from: "profileinfos",
+          localField: "customerEmail",
+          foreignField: "email",
+          as: "customerInfo",
+        },
+      },
+      {
+        $lookup: {
+          from: "profileinfos",
+          localField: "sellerEmail",
+          foreignField: "email",
+          as: "sellerInfo",
+        },
+      },
+    ]);
     if (!orders)
       return res.status(404).json({ error: "Orders not found in db" });
     res.json(orders);
