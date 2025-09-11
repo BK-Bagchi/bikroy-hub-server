@@ -1,5 +1,32 @@
 import orderInfo from "../models/order.models.js";
 
+export const getDisputesInfo = async (req, res) => {
+  try {
+    const result = await orderInfo.aggregate([
+      { $match: { "dispute.isReported": true } },
+      {
+        $lookup: {
+          from: "profileinfos",
+          localField: "customerEmail",
+          foreignField: "email",
+          as: "customerInfo",
+        },
+      },
+      {
+        $lookup: {
+          from: "profileinfos",
+          localField: "sellerEmail",
+          foreignField: "email",
+          as: "sellerInfo",
+        },
+      },
+    ]);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 export const disputeManagement = async (req, res) => {
   try {
     const result = await orderInfo.updateOne(
@@ -21,7 +48,6 @@ export const disputeManagement = async (req, res) => {
       res.status(404).json({ message: "Order not found" });
     }
   } catch (err) {
-    console.error("Error in disputeManagement:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
