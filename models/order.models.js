@@ -23,6 +23,7 @@ const orderSchema = new mongoose.Schema(
     customerEmail: { type: String },
     orderCredentials: { type: Object },
     paymentStatus: { type: Boolean, default: false },
+    paymentMethod: { type: String, enum: ["cod", "online"], default: "cod" },
     orderStatusByAdmin: {
       type: String,
       enum: ["running", "aborted"],
