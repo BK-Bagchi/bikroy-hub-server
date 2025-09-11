@@ -86,11 +86,17 @@ export const getSpecificOrderInfoByAdInfo = async (req, res) => {
   }
 };
 
-export const updateOrderStatusByBuyer = async (req, res) => {
+export const updateOrderStatusByPerson = async (req, res) => {
+  const { person } = req.body;
+  let orderStatusByPerson = "";
+  if (person === "buyer") orderStatusByPerson = "orderStatusByBuyer";
+  else if (person === "seller") orderStatusByPerson = "orderStatusBySeller";
+  else if (person === "admin") orderStatusByPerson = "orderStatusByAdmin";
+
   try {
     const result = await orderInfo.updateOne(
       { orderId: req.query.orderId },
-      { $set: { orderStatusByBuyer: req.body.status } }
+      { $set: { [orderStatusByPerson]: req.body.status } }
     );
     result.matchedCount > 0
       ? res.status(200).json({ message: "Order status updated" })

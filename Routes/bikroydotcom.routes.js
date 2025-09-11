@@ -22,9 +22,7 @@ import {
   getOrdersInfo,
   postPlaceOrder,
   postDeleteOrder,
-  updateOrderStatusByAdmin,
-  updateOrderStatusByBuyer,
-  updateOrderStatusBySeller,
+  updateOrderStatusByPerson,
   getSpecificOrderInfoByAdInfo,
   getSpecificOrderInfoByOrderInfo,
 } from "../controller/order.controller.js";
@@ -114,16 +112,10 @@ bikroyDotComRoutes.get(
 // ✔ Orders by a Specific User
 bikroyDotComRoutes.get("/ordersByAnUser", getOrdersByAnUser);
 
-// ✔ Order status update by admin
-bikroyDotComRoutes.patch("/updateOrderStatusByAdmin", updateOrderStatusByAdmin);
-
-// ✔ Order status update by buyer
-bikroyDotComRoutes.patch("/updateOrderStatusByBuyer", updateOrderStatusByBuyer);
-
-// ✔ Order status update by seller
+// ✔ Order status update by admin or buyer or seller
 bikroyDotComRoutes.patch(
-  "/updateOrderStatusBySeller",
-  updateOrderStatusBySeller
+  "/updateOrderStatusByPerson",
+  updateOrderStatusByPerson
 );
 
 // ✔ Delete Order
