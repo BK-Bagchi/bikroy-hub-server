@@ -3,8 +3,12 @@ import mongoose from "mongoose";
 const disputeSchema = new mongoose.Schema(
   {
     isReported: { type: Boolean, default: false },
-    reportedBy: { type: String, enum: ["buyer", "seller"] },
-    reason: { type: String, trim: true },
+    report: [
+      {
+        reportedBy: { type: String, enum: ["buyer", "seller"] },
+        reason: { type: String, trim: true },
+      },
+    ],
     status: { type: String, enum: ["pending", "resolved"], default: "pending" },
     resolution: { type: String },
     resolvedAt: { type: Date },

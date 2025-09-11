@@ -32,6 +32,7 @@ import {
   postPaymentSuccess,
 } from "../controller/sslcomerz.controller.js";
 import { authenticateJWTToken } from "../middleware/authJWT.middleware.js";
+import { disputeManagement } from "../controller/dispute.controller.js";
 dotenv.config();
 
 const bikroyDotComRoutes = express();
@@ -121,6 +122,9 @@ bikroyDotComRoutes.patch(
 
 // ✔ Delete Order
 bikroyDotComRoutes.post("/deleteOrder", postDeleteOrder);
+
+// Dispute management
+bikroyDotComRoutes.patch("/disputeManagement", disputeManagement);
 
 // ─────────────────────────────── ROUTES ─────────────────────────────── //
 

@@ -56,8 +56,12 @@ export const payThroughSsl = async (req, res) => {
       orderCredentials: data,
       dispute: {
         isReported: false,
-        reportedBy: null,
-        reason: null,
+        report: [
+          {
+            reportedBy: null,
+            reason: null,
+          },
+        ],
         status: "pending",
         resolution: null,
         resolvedAt: null,
