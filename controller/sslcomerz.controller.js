@@ -11,6 +11,7 @@ const store_passwd = process.env.SSL_STORE_PASSWORD;
 const is_live = false; // Change to true in production
 
 export const payThroughSsl = async (req, res) => {
+  const { paymentMethod } = req.body;
   const orderId = new mongoose.Types.ObjectId().toString();
   const product = await addsInfo.findById(req.body._id);
   if (!product) return res.status(404).json({ error: "Product not found" });
@@ -43,6 +44,33 @@ export const payThroughSsl = async (req, res) => {
     ship_country: "Bangladesh",
   };
 
+  if (paymentMethod === "cod") {
+    await orderInfo.create({
+      orderId,
+      productId: new mongoose.Types.ObjectId(req.body._id),
+      sellerEmail: req.body.sellerEmail,
+      customerEmail: req.body.customerEmail,
+      orderCredentials: data,
+      paymentMethod: paymentMethod,
+      dispute: {
+        isReported: false,
+        report: [
+          {
+            reportedBy: null,
+            reason: null,
+          },
+        ],
+        status: "pending",
+        resolution: null,
+        resolvedAt: null,
+      },
+    });
+    return res
+      .status(200)
+      .json({ url: `${process.env.FRONT_URL}/paymentSuccess` });
+  }
+
+  //if payment method is online, pays through ssl
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
   const apiResponse = await sslcz.init(data);
 
@@ -54,6 +82,7 @@ export const payThroughSsl = async (req, res) => {
       sellerEmail: req.body.sellerEmail,
       customerEmail: req.body.customerEmail,
       orderCredentials: data,
+      paymentMethod: paymentMethod,
       dispute: {
         isReported: false,
         report: [
