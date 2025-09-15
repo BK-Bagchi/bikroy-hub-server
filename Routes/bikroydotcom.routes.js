@@ -23,8 +23,7 @@ import {
   postPlaceOrder,
   postDeleteOrder,
   updateOrderStatusByPerson,
-  getSpecificOrderInfoByAdInfo,
-  getSpecificOrderInfoByOrderInfo,
+  getSpecificOrderInfo,
   getPostedOrGotOrdersByABuyerOrSeller,
 } from "../controller/order.controller.js";
 import {
@@ -103,11 +102,7 @@ bikroyDotComRoutes.get("/getOrdersInfo", getOrdersInfo);
 // ✔ Get A Specific Order
 bikroyDotComRoutes.get(
   "/getSpecificOrderInfo", //byOrderInfo
-  getSpecificOrderInfoByOrderInfo
-);
-bikroyDotComRoutes.get(
-  "/getSpecificOrderInfoByAdInfo",
-  getSpecificOrderInfoByAdInfo
+  getSpecificOrderInfo
 );
 
 // ✔ Orders by a Specific User (Buyer or Seller)

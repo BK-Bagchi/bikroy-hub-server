@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import addsInfo from "../models/adds.models.js";
 import orderInfo from "../models/order.models.js";
 import { payThroughSsl } from "./sslcomerz.controller.js";
 dotenv.config();
@@ -41,7 +39,7 @@ export const getOrdersInfo = async (req, res) => {
   }
 };
 
-export const getSpecificOrderInfoByOrderInfo = async (req, res) => {
+export const getSpecificOrderInfo = async (req, res) => {
   try {
     const order = await orderInfo.aggregate([
       { $match: { orderId: req.query.orderId } },
@@ -58,30 +56,6 @@ export const getSpecificOrderInfoByOrderInfo = async (req, res) => {
     if (!order) return res.status(404).json({ error: "Order not found" });
     res.json(order);
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-export const getSpecificOrderInfoByAdInfo = async (req, res) => {
-  try {
-    const add = await addsInfo.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(req.query.addId) } },
-      {
-        $lookup: {
-          from: "orderinfos", // collection name
-          localField: "_id", // field in addsInfo
-          foreignField: "productId", // field in orderInfo
-          as: "orderInfo",
-        },
-      },
-    ]);
-
-    if (!add || add.length === 0)
-      return res.status(404).json({ error: "Order not found" });
-
-    res.json(add);
-  } catch (err) {
-    console.error("Error in getSpecificOrderInfoByAdInfo:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
