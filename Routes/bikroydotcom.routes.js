@@ -32,8 +32,11 @@ import {
 } from "../controller/sslcomerz.controller.js";
 import { authenticateJWTToken } from "../middleware/authJWT.middleware.js";
 import {
+  adminResolveDispute,
   disputeManagement,
   getDisputesInfo,
+  postAdminPaymentFail,
+  postAdminPaymentSuccess,
 } from "../controller/dispute.controller.js";
 dotenv.config();
 
@@ -127,6 +130,12 @@ bikroyDotComRoutes.post("/deleteOrder", postDeleteOrder);
 bikroyDotComRoutes.get("/getDisputesInfo", getDisputesInfo);
 // Dispute management
 bikroyDotComRoutes.patch("/disputeManagement", disputeManagement);
+// Admin resolve dispute (through refund or fund disbursement)
+bikroyDotComRoutes.patch("/adminResolveDispute", adminResolveDispute);
+// ✔ admin Payment Success
+bikroyDotComRoutes.post("/admin/success/:_id", postAdminPaymentSuccess);
+// ✔ Admin Payment Failed
+bikroyDotComRoutes.post("/admin/fail/:_id", postAdminPaymentFail);
 
 // ─────────────────────────────── ROUTES ─────────────────────────────── //
 
