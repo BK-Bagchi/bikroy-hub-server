@@ -146,11 +146,41 @@ export const postDeleteOrder = async (req, res) => {
 };
 
 export const getOrdersByAnUser = async (req, res) => {
+  const { person } = req.query;
+  let personEmail = "";
+  if (person === "buyer") personEmail = "customerEmail";
+  else if (person === "seller") personEmail = "sellerEmail";
+  else return res.status(400).json({ error: "Invalid person type" });
+
   try {
     const userOrders = await orderInfo.find({
-      customerEmail: req.query.userEmail,
+      [personEmail]: req.query.userEmail,
     });
     res.json({ userOrders });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getPostedOrGotOrdersByABuyerOrSeller = async (req, res) => {
+  const { person } = req.query;
+  let personEmail = "";
+  if (person === "buyer") personEmail = "customerEmail";
+  else if (person === "seller") personEmail = "sellerEmail";
+  try {
+    const response = await orderInfo.aggregate([
+      { $match: { [personEmail]: req.query.userEmail } },
+      {
+        $lookup: {
+          from: "addsinfos", // collection name
+          localField: "productId", // field in addsInfo
+          foreignField: "_id", // field in orderInfo
+          as: "addsInfo",
+        },
+      },
+    ]);
+
+    res.json({ response });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }

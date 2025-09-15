@@ -25,6 +25,7 @@ import {
   updateOrderStatusByPerson,
   getSpecificOrderInfoByAdInfo,
   getSpecificOrderInfoByOrderInfo,
+  getPostedOrGotOrdersByABuyerOrSeller,
 } from "../controller/order.controller.js";
 import {
   postPaymentFail,
@@ -109,8 +110,14 @@ bikroyDotComRoutes.get(
   getSpecificOrderInfoByAdInfo
 );
 
-// ✔ Orders by a Specific User
+// ✔ Orders by a Specific User (Buyer or Seller)
 bikroyDotComRoutes.get("/ordersByAnUser", getOrdersByAnUser);
+
+// ✔ Orders posted by a Specific Buyer or Orders got by a Specific Seller
+bikroyDotComRoutes.get(
+  "/postedOrGotOrdersByABuyerOrSeller",
+  getPostedOrGotOrdersByABuyerOrSeller
+);
 
 // ✔ Order status update by admin or buyer or seller
 bikroyDotComRoutes.patch(
