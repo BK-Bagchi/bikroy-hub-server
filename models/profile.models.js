@@ -6,7 +6,7 @@ const profileSchema = new mongoose.Schema(
     email: { type: String },
     phoneNumber: { type: String },
     photoURL: { type: String },
-    role: { type: String, enum: ["buyer", "seller", "admin"] },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
     paymentMedia: {
       method: { type: String, enum: ["bank", "bkash", "rocket", "nagad"] },
       accountNumber: { type: String },
