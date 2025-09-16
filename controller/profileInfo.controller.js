@@ -76,3 +76,28 @@ export const postProfileInfo = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const patchAddToFavorites = async (req, res) => {
+  const { email, addId } = req.body;
+  try {
+    const result = await profileInfo.updateOne(
+      { email },
+      { $addToSet: { favoriteAdds: addId } }
+    );
+    result.modifiedCount > 0
+      ? res.status(200).json({ message: "Ad added to favorites" })
+      : res.status(404).json({ message: "Profile not found" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getFavoriteAdds = async (req, res) => {
+  try {
+    const email = req.query.userEmail;
+    const data = await profileInfo.findOne({ email }).select("favoriteAdds");
+    res.send(data);
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

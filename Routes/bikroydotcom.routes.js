@@ -1,7 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import {
+  getFavoriteAdds,
   getProfileInfo,
+  patchAddToFavorites,
   postProfileInfo,
   postUserLogin,
 } from "../controller/profileInfo.controller.js";
@@ -57,6 +59,12 @@ bikroyDotComRoutes.get("/getProfileInfo", authenticateJWTToken, getProfileInfo);
 
 // ✔ Update Profile Info
 bikroyDotComRoutes.post("/postProfileInfo", postProfileInfo);
+
+// ✔ Adds ad to favorites
+bikroyDotComRoutes.patch("/addToFavorites", patchAddToFavorites);
+
+// ✔ Get favorites ads
+bikroyDotComRoutes.get("/getFavoriteAdds", getFavoriteAdds);
 
 // ✔ Get All Ads
 bikroyDotComRoutes.get("/getAddsInfo", getAddsInfo);
