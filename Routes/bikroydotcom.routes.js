@@ -27,6 +27,7 @@ import {
   updateOrderStatusByPerson,
   getSpecificOrderInfo,
   getPostedOrGotOrdersByABuyerOrSeller,
+  updateShipmentStatusBySeller,
 } from "../controller/order.controller.js";
 import {
   postPaymentFail,
@@ -129,6 +130,12 @@ bikroyDotComRoutes.get(
 bikroyDotComRoutes.patch(
   "/updateOrderStatusByPerson",
   updateOrderStatusByPerson
+);
+
+// ✔ Shipment status update by seller
+bikroyDotComRoutes.patch(
+  "/updateShipmentStatusBySeller",
+  updateShipmentStatusBySeller
 );
 
 // ✔ Delete Order

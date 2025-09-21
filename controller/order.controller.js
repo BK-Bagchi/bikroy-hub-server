@@ -108,6 +108,20 @@ export const updateOrderStatusByAdmin = async (req, res) => {
   }
 };
 
+export const updateShipmentStatusBySeller = async (req, res) => {
+  try {
+    const result = await orderInfo.updateOne(
+      { orderId: req.query.orderId },
+      { $set: { shipmentStatus: req.body.status } }
+    );
+    result.matchedCount > 0
+      ? res.status(200).json({ message: "Shipment Status Updated" })
+      : res.status(404).json({ message: "Order not found" });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 export const postDeleteOrder = async (req, res) => {
   try {
     const result = await orderInfo.deleteOne({ orderId: req.query.orderId });
