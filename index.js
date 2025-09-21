@@ -1,8 +1,11 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
 import dbConnection from "./config/database.js";
 import bikroyDotComRoutes from "./Routes/bikroydotcom.routes.js";
+import chatSocket from "./socket/chatSocket.js";
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +25,17 @@ app.use(
 app.use(express.json()); // app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false })); // app.use(bodyParser.urlencoded({ extended: false }));
 
+// ───────────────────── Socket.io ───────────────────── //
+// Create HTTP server and attach socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONT_URL,
+    methods: ["GET", "POST"],
+  },
+});
+chatSocket(io);
+
 // Initialize MongoDB Connection
 dbConnection();
 
@@ -29,6 +43,6 @@ dbConnection();
 app.use("/", bikroyDotComRoutes);
 
 // ───────────────────── Server ───────────────────── //
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`🚀 Server is running on ${port}`);
 });
