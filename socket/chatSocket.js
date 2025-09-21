@@ -1,4 +1,5 @@
 import Message from "../models/message.models.js";
+import profileInfo from "../models/profile.models.js";
 
 // Keep track of connected users: email → socket.id
 let users = {};
@@ -8,7 +9,6 @@ export default function chatSocket(io) {
     console.log("✅ User connected", socket.id);
 
     // Registration per conversation
-    // payload = { email: currentUserEmail, partnerEmail: otherUserEmail }
     socket.on("register", async ({ email, partnerEmail }) => {
       users[email] = socket.id;
       console.log(`${email} registered for chat with ${partnerEmail}`);
@@ -19,12 +19,23 @@ export default function chatSocket(io) {
         sellerEmail: partnerEmail,
       }).sort({ createdAt: 1 });
 
+      //Load profile into of both buyer and seller
+      const info = await profileInfo
+        .find({
+          email: { $in: [email, partnerEmail] },
+        })
+        .select("email displayName photoURL");
+      const buyerInfo = await info.find((u) => u.email === email);
+      const sellerInfo = await info.find((u) => u.email === partnerEmail);
+
+      // Send profile info to the connected user
+      socket.emit("loadProfile", { buyerInfo, sellerInfo });
+
       // Send chat history to the connected user
       socket.emit("loadMessages", messages);
     });
 
     // Private messaging
-    // payload = { buyerEmail, sellerEmail, sender, text }
     socket.on(
       "privateMessage",
       async ({ buyerEmail, sellerEmail, sender, text }) => {
