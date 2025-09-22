@@ -4,7 +4,12 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 import dbConnection from "./config/database.js";
-import bikroyDotComRoutes from "./Routes/bikroydotcom.routes.js";
+// import bikroyDotComRoutes from "./Routes/bikroydotcom.routes.js";
+import addsRouter from "./Routes/adds.routes.js";
+import disputeRouter from "./Routes/dispute.routes.js";
+import orderRouter from "./Routes/order.routes.js";
+import profileInfoRouter from "./Routes/profileInfo.routes.js";
+import sslcomerzRouter from "./Routes/sslcomerz..routes.js";
 import chatSocket from "./socket/chatSocket.js";
 
 // Load environment variables
@@ -40,7 +45,12 @@ chatSocket(io);
 dbConnection();
 
 // ─────────────────────────────── ROUTES ─────────────────────────────── //
-app.use("/", bikroyDotComRoutes);
+app.get("/", (req, res) => res.redirect(`${process.env.FRONT_URL}`));
+app.use("/adds", addsRouter);
+app.use("/dispute", disputeRouter);
+app.use("/order", orderRouter);
+app.use("/profileInfo", profileInfoRouter);
+app.use("/sslcomerz", sslcomerzRouter);
 
 // ───────────────────── Server ───────────────────── //
 server.listen(port, () => {
